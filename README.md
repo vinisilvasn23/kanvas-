@@ -34,15 +34,13 @@ source venv/Scripts/activate
 5. Instale as bibliotecas necessárias:
 
 ```shell
-pip install -r requirements.txt
+pip install model_bakery pytest-testdox pytest-django
 ```
-**IMPORTANTE**: As bibliotecas inicialmente listadas requirements.txt só dizem respeito aos testes, para a execução da sua aplicação você deve atualizá-lo adicionando todos os pacotes necessários.
 
 
 ## Execução dos testes:
 
-Como este projeto se trata de uma refatoração, não terá divisão de testes por tarefa, pois o objetivo é que todos os testes continuem passando após a refatoração.
-Deste modo, para rodar a bateria de todos os testes, utilize:
+Para rodar a bateria de todos os testes, utilize:
 ```shell
 pytest --testdox -vvs
 ```
