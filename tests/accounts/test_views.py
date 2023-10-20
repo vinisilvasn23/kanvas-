@@ -6,14 +6,14 @@ from django.contrib.auth.hashers import (
 )
 
 
-class TestAccountView(APITestCase):
+class TestCreateAccountView(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.BASE_URL = "/api"
+        cls.BASE_URL = "/api/accounts/"
 
     def test_can_create_superuser_with_success(self):
         expected = 201
-        url = f"{self.BASE_URL}/accounts/"
+        url = self.BASE_URL
         user_data = {
             "username": "bob",
             "password": "1234",
@@ -53,7 +53,7 @@ class TestAccountView(APITestCase):
 
     def test_can_create_common_user_with_success(self):
         expected = 201
-        url = f"{self.BASE_URL}/accounts/"
+        url = self.BASE_URL
         user_data = {
             "username": "bob",
             "password": "1234",
@@ -93,7 +93,7 @@ class TestAccountView(APITestCase):
 
     def test_can_not_create_account_missing_body(self):
         expected = 400
-        url = f"{self.BASE_URL}/accounts/"
+        url = self.BASE_URL
         user_data = {}
         response = self.client.post(url, user_data, format="json")
         message = f"\n<{url}> status code da rota {url} está diferente de {expected}."
@@ -122,7 +122,7 @@ class TestAccountView(APITestCase):
 
     def test_can_not_create_a_duplicate_username_and_email(self):
         expected = 400
-        url = f"{self.BASE_URL}/accounts/"
+        url = self.BASE_URL
         user_data = {
             "username": "bob",
             "password": "1234",
@@ -158,8 +158,14 @@ class TestAccountView(APITestCase):
         )
         self.assertEqual(result["username"], expected_response_username, message)
 
+
+class TestLoginAccountView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/login/"
+
     def test_login_with_incorrect_credentials(self):
-        URL = "/api/login/"
+        URL = self.BASE_URL
         account_data = {
             "username": "account_1111",
             "password": "1111",
@@ -178,7 +184,7 @@ class TestAccountView(APITestCase):
         self.assertEqual(expected_body, result_body, message)
 
     def test_login_without_required_fields(self):
-        URL = "/api/login/"
+        URL = self.BASE_URL
         account_data = {}
         response = self.client.post(URL, account_data, format="json")
         expected_status_code = 400
@@ -194,7 +200,7 @@ class TestAccountView(APITestCase):
             username="account_1111",
             password=make_password("1234"),
         )
-        URL = "/api/login/"
+        URL = self.BASE_URL
         account_data = {
             "username": "account_1111",
             "password": "1234",

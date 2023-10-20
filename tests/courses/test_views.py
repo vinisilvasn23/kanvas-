@@ -7,7 +7,7 @@ from uuid import uuid4 as v4
 from datetime import datetime
 
 
-class TestCourseView(APITestCase):
+class TestCreateCourseView(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.BASE_URL = "/api/courses/"
@@ -213,6 +213,65 @@ class TestCourseView(APITestCase):
             result,
         )
 
+
+class TestReadCourseView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/courses/"
+        cls.superuser = baker.make("accounts.Account", is_superuser=True)
+        cls.common_user = baker.make("accounts.Account", is_superuser=False)
+
+        cls.superuser_token = str(
+            RefreshToken.for_user(cls.superuser).access_token,
+        )
+        cls.common_user_token = str(
+            RefreshToken.for_user(cls.common_user).access_token,
+        )
+        cls.courses_without_students = baker.make("courses.Course", _quantity=3)
+
+    def test_can_read_all_courses_using_superuser_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
+        response = self.client.get(self.BASE_URL)
+        expected_status_code = 200
+        result_status_code = response.status_code
+        message = f"<{self.BASE_URL}> status code retornado diferente de {expected_status_code}."
+        self.assertEqual(expected_status_code, result_status_code, message)
+
+        expected_course_quantity = len(self.courses_without_students)
+        result_course_quantity = len(response.json())
+        message = f"<{self.BASE_URL}> listagem não está retornando todos os cursos."
+        self.assertEqual(expected_course_quantity, result_course_quantity, message)
+
+    def test_can_read_only_own_courses_using_common_token(self):
+        course = baker.make("courses.Course")
+        course.students.add(self.common_user)
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.common_user_token)
+        response = self.client.get(self.BASE_URL)
+        expected_status_code = 200
+        result_status_code = response.status_code
+        message = f"<{self.BASE_URL}> status code retornado diferente de {expected_status_code}."
+        self.assertEqual(expected_status_code, result_status_code, message)
+
+        expected_course_quantity = 1
+        result_course_quantity = len(response.json())
+        message = f"<{self.BASE_URL}> listagem não está retornando somente os cursos que o usuário participa."
+        self.assertEqual(expected_course_quantity, result_course_quantity, message)
+
+
+class TestDeleteCourseView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/courses/"
+        cls.superuser = baker.make("accounts.Account", is_superuser=True)
+        cls.common_user = baker.make("accounts.Account", is_superuser=False)
+
+        cls.superuser_token = str(
+            RefreshToken.for_user(cls.superuser).access_token,
+        )
+        cls.common_user_token = str(
+            RefreshToken.for_user(cls.common_user).access_token,
+        )
+
     def test_can_delete_course_using_superuser_token(self):
         course = baker.make("courses.Course")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
@@ -241,6 +300,21 @@ class TestCourseView(APITestCase):
         message = f"<{self.BASE_URL}{course.id}/> não foi impedido que o curso fosse excluído do banco de dados."
         self.assertEqual(expected_count, result_count, message)
 
+
+class TestRetrieveCourseView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/courses/"
+        cls.superuser = baker.make("accounts.Account", is_superuser=True)
+        cls.common_user = baker.make("accounts.Account", is_superuser=False)
+
+        cls.superuser_token = str(
+            RefreshToken.for_user(cls.superuser).access_token,
+        )
+        cls.common_user_token = str(
+            RefreshToken.for_user(cls.common_user).access_token,
+        )
+
     def test_can_retrieve_course_using_superuser_token(self):
         course = baker.make("courses.Course")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
@@ -266,6 +340,29 @@ class TestCourseView(APITestCase):
             f"Deve ser semelhante a este {expected_body}."
         )
         self.assertEqual(expected_body, result_body, message)
+
+    def test_can_not_retrieve_a_course_which_not_exists_using_superuser_token(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
+        response = self.client.get(self.BASE_URL + str(v4()) + "/")
+        expected_status_code = 404
+        result_status_code = response.status_code
+        message = f"<{self.BASE_URL}{v4()}/> status code retornado diferente de {expected_status_code}."
+        self.assertEqual(expected_status_code, result_status_code, message)
+
+
+class TestUpdateCourseView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/courses/"
+        cls.superuser = baker.make("accounts.Account", is_superuser=True)
+        cls.common_user = baker.make("accounts.Account", is_superuser=False)
+
+        cls.superuser_token = str(
+            RefreshToken.for_user(cls.superuser).access_token,
+        )
+        cls.common_user_token = str(
+            RefreshToken.for_user(cls.common_user).access_token,
+        )
 
     def test_can_update_course_using_superuser_token(self):
         course = baker.make("courses.Course")
@@ -294,14 +391,6 @@ class TestCourseView(APITestCase):
         expected_status_code = 403
         result_status_code = response.status_code
         message = f"<{self.BASE_URL}{course.id}/> status code retornado diferente de {expected_status_code}."
-        self.assertEqual(expected_status_code, result_status_code, message)
-
-    def test_can_not_retrieve_a_course_which_not_exists_using_superuser_token(self):
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
-        response = self.client.get(self.BASE_URL + str(v4()) + "/")
-        expected_status_code = 404
-        result_status_code = response.status_code
-        message = f"<{self.BASE_URL}{v4()}/> status code retornado diferente de {expected_status_code}."
         self.assertEqual(expected_status_code, result_status_code, message)
 
     def test_can_add_student_into_course_using_superuser_token(self):

@@ -6,7 +6,7 @@ from contents.models import Content
 from uuid import uuid4 as v4
 
 
-class TestCourseView(APITestCase):
+class TestCreateContentView(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.BASE_URL = "/api/courses/{}/contents/"
@@ -79,6 +79,21 @@ class TestCourseView(APITestCase):
         )
         self.assertEqual(expected_status_code, result_status_code, message)
 
+
+class TestRetrieveContentView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/courses/{}/contents/"
+        cls.superuser = baker.make("accounts.Account", is_superuser=True)
+        cls.common_user = baker.make("accounts.Account", is_superuser=False)
+
+        cls.superuser_token = str(
+            RefreshToken.for_user(cls.superuser).access_token,
+        )
+        cls.common_user_token = str(
+            RefreshToken.for_user(cls.common_user).access_token,
+        )
+
     def test_can_retrieve_content_using_superuser_token(self):
         content = baker.make("contents.Content")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
@@ -133,6 +148,57 @@ class TestCourseView(APITestCase):
         )
         self.assertEqual(expected_keys, result_body, message)
 
+    def test_can_not_retrieve_content_with_invalid_course_id(self):
+        content = baker.make("contents.Content")
+        random_course_uuid = str(v4())
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
+        url = self.BASE_URL.format(random_course_uuid) + str(content.id) + "/"
+        response = self.client.get(url)
+        expected_status_code = 404
+        result_status_code = response.status_code
+        message = (
+            f"<{url}> status code retornado está diferente de {expected_status_code}."
+        )
+        self.assertEqual(expected_status_code, result_status_code, message)
+
+        expected_body = {"detail": "course not found."}
+        result_body = response.json()
+        message = f"<{url}> retorno está diferente do esperado."
+        self.assertEqual(expected_body, result_body, message)
+
+    def test_can_not_retrieve_content_with_invalid_content_id(self):
+        course = baker.make("courses.Course")
+        random_content_uuid = str(v4())
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
+        url = self.BASE_URL.format(str(course.id)) + str(random_content_uuid) + "/"
+        response = self.client.get(url)
+        expected_status_code = 404
+        result_status_code = response.status_code
+        message = (
+            f"<{url}> status code retornado está diferente de {expected_status_code}."
+        )
+        self.assertEqual(expected_status_code, result_status_code, message)
+
+        expected_body = {"detail": "content not found."}
+        result_body = response.json()
+        message = f"<{url}> retorno está diferente do esperado."
+        self.assertEqual(expected_body, result_body, message)
+
+
+class TestUpdateContentView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/courses/{}/contents/"
+        cls.superuser = baker.make("accounts.Account", is_superuser=True)
+        cls.common_user = baker.make("accounts.Account", is_superuser=False)
+
+        cls.superuser_token = str(
+            RefreshToken.for_user(cls.superuser).access_token,
+        )
+        cls.common_user_token = str(
+            RefreshToken.for_user(cls.common_user).access_token,
+        )
+
     def test_can_update_content_using_superuser_token(self):
         content = baker.make("contents.Content")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.superuser_token)
@@ -177,6 +243,21 @@ class TestCourseView(APITestCase):
             f"<{url}> status code retornado está diferente de {expected_status_code}."
         )
         self.assertEqual(expected_status_code, result_status_code, message)
+
+
+class TestDeleteContentView(APITestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.BASE_URL = "/api/courses/{}/contents/"
+        cls.superuser = baker.make("accounts.Account", is_superuser=True)
+        cls.common_user = baker.make("accounts.Account", is_superuser=False)
+
+        cls.superuser_token = str(
+            RefreshToken.for_user(cls.superuser).access_token,
+        )
+        cls.common_user_token = str(
+            RefreshToken.for_user(cls.common_user).access_token,
+        )
 
     def test_can_not_delete_content_using_common_user_token(self):
         content = baker.make("contents.Content")
