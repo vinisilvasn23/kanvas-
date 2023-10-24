@@ -1,4 +1,5 @@
 from django.db import models
+from uuid import uuid4
 from accounts.models import Account
 
 
@@ -9,6 +10,7 @@ class CourseStatusEnum(models.TextChoices):
 
 
 class Courses(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     name = models.CharField(max_length=100, unique=True, null=False)
     status = models.CharField(
         max_length=20,
