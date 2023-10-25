@@ -13,6 +13,7 @@ class AccountSerializer(serializers.ModelSerializer):
                 "validators": [
                     UniqueValidator(
                         queryset=Account.objects.all(),
+                        message="A user with that username already exists."
                     )
                 ]
             },
@@ -20,6 +21,7 @@ class AccountSerializer(serializers.ModelSerializer):
                 "validators": [
                     UniqueValidator(
                         queryset=Account.objects.all(),
+                        message="user with this email already exists."
                     )
                 ]
             },

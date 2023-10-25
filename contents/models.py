@@ -1,6 +1,6 @@
 from django.db import models
 from uuid import uuid4
-from courses.models import Courses
+from courses.models import Course
 
 
 class Content(models.Model):
@@ -9,7 +9,7 @@ class Content(models.Model):
     content = models.TextField(null=False)
     video_url = models.CharField(max_length=200)
     course = models.ForeignKey(
-        Courses, null=False,
+        Course, null=False,
         on_delete=models.CASCADE,
         related_name="contents"
         )

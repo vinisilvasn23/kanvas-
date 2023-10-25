@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Courses
+from .models import Course
 from contents.serializers import ContentSerializer
 from students_courses.serializers import StudentCourseSerializer
 from accounts.models import Account
@@ -11,7 +11,7 @@ class CoursesSerializer(serializers.ModelSerializer):
     instructor = serializers.UUIDField(source="instructor_id", required=False)
 
     class Meta:
-        model = Courses
+        model = Course
         fields = (
             "id",
             "name",
@@ -30,4 +30,11 @@ class CoursesSerializer(serializers.ModelSerializer):
         else:
             instructor = Account.objects.get(id=instructor_id)
         validated_data["instructor"] = instructor
-        return Courses.objects.create(**validated_data)
+        return Course.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance

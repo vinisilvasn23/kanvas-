@@ -9,7 +9,7 @@ class CourseStatusEnum(models.TextChoices):
     FINISHED = "finished"
 
 
-class Courses(models.Model):
+class Course(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     name = models.CharField(max_length=100, unique=True, null=False)
     status = models.CharField(

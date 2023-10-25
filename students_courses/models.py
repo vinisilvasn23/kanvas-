@@ -1,7 +1,7 @@
 from django.db import models
 from uuid import uuid4
 from accounts.models import Account
-from courses.models import Courses
+from courses.models import Course
 
 
 class StudentCourseStatusEnum(models.TextChoices):
@@ -22,7 +22,7 @@ class StudentCourse(models.Model):
         related_name="students_courses"
         )
     course = models.ForeignKey(
-        Courses, null=False,
+        Course, null=False,
         on_delete=models.CASCADE,
         related_name="students_courses"
         )
