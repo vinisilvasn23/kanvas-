@@ -17,12 +17,13 @@ class StudentCourse(models.Model):
         default=StudentCourseStatusEnum.PENDING
         )
     student = models.ForeignKey(
-        Account, null=False,
+        Account,
+        null=False,
         on_delete=models.CASCADE,
         related_name="students_courses"
-        )
+    )
     course = models.ForeignKey(
-        Course, null=False,
+        Course,
         on_delete=models.CASCADE,
         related_name="students_courses"
-        )
+    )
