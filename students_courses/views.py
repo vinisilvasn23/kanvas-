@@ -7,8 +7,10 @@ from courses.serializers import StudentCourseSerializer
 from .permissions import IsSuperuserPermission
 from rest_framework.exceptions import NotFound
 from .exceptions import NoActiveAccountsError
+from drf_spectacular.utils import extend_schema
 
 
+@extend_schema(tags=["Criação e listagem dos estudantes"])
 class AddStudentToCourseView(RetrieveUpdateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsSuperuserPermission]
@@ -30,7 +32,7 @@ class AddStudentToCourseView(RetrieveUpdateAPIView):
                 if account:
                     student_course = StudentCourse.objects.create(
                         student=account, course=course
-                        )
+                    )
                     course.students_courses.add(student_course)
                 else:
                     error_emails.append(email)
