@@ -4,8 +4,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsSuperuserOrReadOnly
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.exceptions import NotFound
+from drf_spectacular.utils import extend_schema
 
 
+@extend_schema(
+    tags=["Criação e listagem de cursos"],
+)
 class ListCreateCoursesView(ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsSuperuserOrReadOnly]
@@ -13,7 +17,7 @@ class ListCreateCoursesView(ListCreateAPIView):
     serializer_class = CoursesSerializer
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             return CourseListSerializer
         return super().get_serializer_class()
 
@@ -22,13 +26,14 @@ class ListCreateCoursesView(ListCreateAPIView):
         if user.is_superuser:
             queryset = Course.objects.all()
         else:
-            queryset = Course.objects.filter(
-                students=user
-                )
+            queryset = Course.objects.filter(students=user)
 
         return queryset
 
 
+@extend_schema(
+    tags=["Listagem, atualização e deleção de cursos por id"],
+)
 class RetrieveUpdateDestroyCoursesView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsSuperuserOrReadOnly]
