@@ -6,11 +6,16 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from .permissions import (
     AccessContentPermission,
     IsSuperuserPermission,
-    check_content_permission
-    )
+    check_content_permission,
+)
 from rest_framework.exceptions import NotFound
+from drf_spectacular.utils import extend_schema
 
 
+@extend_schema(
+    description="Rota para criação de conteúdo",
+    tags=["Criação de conteúdos associando ao curso"],
+)
 class CreateContentView(CreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsSuperuserPermission]
@@ -23,6 +28,9 @@ class CreateContentView(CreateAPIView):
         serializer.save(course=course)
 
 
+@extend_schema(
+    tags=["Listagem, atualização e deleção de conteúdos por id"],
+)
 class ListUpdateDestroyContentView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [AccessContentPermission]
@@ -40,7 +48,7 @@ class ListUpdateDestroyContentView(RetrieveUpdateDestroyAPIView):
             if not content:
                 raise NotFound({"detail": "content not found."})
 
-            if self.request.method == 'GET':
+            if self.request.method == "GET":
                 if check_content_permission(course, self.request.user):
                     return content
                 else:
