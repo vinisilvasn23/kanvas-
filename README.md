@@ -30,29 +30,30 @@ Antes de começar a usar a API, certifique-se de que possui os seguintes requisi
 
 2. **Configure o ambiente virtual:**
 ```shell
-Copy code
 python -m venv venv
-source venv/bin/activate  # No Windows, use "venv\Scripts\activate"```
+source venv/bin/activate  # No Windows, use "venv\Scripts\activate"
+```
 3. **Instale as dependências:**
-
 ```shell
 Copy code
 pip install -r requirements.txt
-Configure o banco de dados:```
+Configure o banco de dados:
+```
 
 4. **Crie um banco de dados PostgreSQL.**
 Atualize as configurações de banco de dados no arquivo settings.py.
 
 5. **Aplicar migrações:**
-```
-shell
+```shell
 Copy code
-python manage.py migrate```
+python manage.py migrate
+```
 6. **Execute a aplicação:**
 
 ```shell
 Copy code
-python manage.py runserver```
+python manage.py runserver
+```
 
 Acesse a documentação Swagger:
 
