@@ -1,78 +1,59 @@
-# M5 - Projeto Final Kanvas
+# API de Gerenciamento de Cursos e Aulas (EAD) - Kanvas
 
-## Preparando ambiente para execução dos testes
+## O Projeto
 
-1. Verifique se os pacotes **pytest**, **pytest-testdox** e/ou **pytest-django** estão instalados globalmente em seu sistema:
+Desenvolvimento de uma API REST para o gerenciamento de cursos e aulas em um ambiente de ensino a distância (EAD). Foi utilizado Python e o framework Django, juntamente com o Django Rest Framework para construir a aplicação.
+
+## Principais Recursos
+
+- Banco de Dados PostgreSQL
+- Documentação no formato Swagger para uma experiência de uso simples
+- Deploy da aplicação no Render
+- Autenticação com JSON Web Token (JWT)
+
+## Requisitos de Instalação
+
+Antes de começar a usar a API, certifique-se de que possui os seguintes requisitos instalados em seu ambiente:
+
+- Python 3.x
+- Django
+- Django Rest Framework
+- PostgreSQL
+- Render (para implantação na web)
+- Outras dependências especificadas no arquivo `requirements.txt`
+## Configuração e Uso
+
+1. **Clone o repositório:**
+
+   ```shell
+   git clone https://seurepositorio.com/api-ead.git
+
+2. **Configure o ambiente virtual:**
 ```shell
-pip list
-```
-
-2. Caso eles apareçam na listagem, rode os comandos abaixo para realizar a desinstalação:
-
-```shell
-pip uninstall pytest pytest-testdox pytest-django -y
-```
-
-3. Após isso, crie seu ambiente virtual:
-```shell
+Copy code
 python -m venv venv
-```
-
-4. Ative seu ambiente virtual:
-
-```shell
-# Linux e Mac:
-source venv/bin/activate
-
-# Windows (PowerShell):
-.\venv\Scripts\activate
-
-# Windows (GitBash):
-source venv/Scripts/activate
-```
-
-5. Instale as bibliotecas necessárias:
+source venv/bin/activate  # No Windows, use "venv\Scripts\activate"```
+3. **Instale as dependências:**
 
 ```shell
-pip install model_bakery pytest-testdox pytest-django
+Copy code
+pip install -r requirements.txt
+Configure o banco de dados:```
+
+4. **Crie um banco de dados PostgreSQL.**
+Atualize as configurações de banco de dados no arquivo settings.py.
+
+5. **Aplicar migrações:**
 ```
-
-
-## Execução dos testes:
-
-Para rodar a bateria de todos os testes, utilize:
-```shell
-pytest --testdox -vvs
-```
----
-
-Caso você tenha interesse em rodar apenas um diretório de testes específico, utilize os comandos abaixo:
-
-Accounts:
-```python
-pytest --testdox -vvs tests/accounts/
-```
-
-Contents:
-```python
-pytest --testdox -vvs tests/contents/
-```
-
-Courses:
-```python
-pytest --testdox -vvs tests/courses/
-```
-
----
-
-Você também pode rodar cada método de teste isoladamente:
+shell
+Copy code
+python manage.py migrate```
+6. **Execute a aplicação:**
 
 ```shell
-pytest --testdox -vvs caminho/para/o/arquivo/de/teste::NomeDaClasse::nome_do_metodo_de_teste
-```
+Copy code
+python manage.py runserver```
 
-**Exemplo**: executar somente "test_user_login_without_required_fields".
+Acesse a documentação Swagger:
 
-```shell
-pytest --testdox -vvs tests/accounts/tests_views.py::TestLoginAccountView::test_login_without_required_fields
-```
+Abra seu navegador e acesse http://localhost:8000/swagger/ para explorar e testar os endpoints da API.
