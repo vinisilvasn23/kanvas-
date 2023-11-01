@@ -58,3 +58,5 @@ python manage.py runserver
 Acesse a documentação Swagger:
 
 Abra seu navegador e acesse http://localhost:8000/swagger/ para explorar e testar os endpoints da API.
+
+Link do deploy no Render: https://kanvas-lmzh.onrender.com/api/docs/
