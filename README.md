@@ -26,7 +26,7 @@ Antes de começar a usar a API, certifique-se de que possui os seguintes requisi
 1. **Clone o repositório:**
 
    ```shell
-   git clone https://seurepositorio.com/api-ead.git
+   git clone https://github.com/vinisilvasn23/kanvas-
 
 2. **Configure o ambiente virtual:**
 ```shell
